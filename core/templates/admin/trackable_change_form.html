@@ -1,0 +1,10 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_bottom %}
+    {% if change %}
+        <div class="submit-row">
+            <input type="submit" style="background-color: #ba2121;" value="Dar de Baja" name="_unsubscribe">
+        </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}
