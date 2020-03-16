@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -25,10 +24,12 @@ class CreationStampModel(models.Model):
 
 class CreationAuditModel(CreationStampModel):
     """Adds creation audit values to a model"""
+
+    customer = models.ForeignKey(to='customers.Customer', blank=False, null=False, on_delete=models.CASCADE)
     created_by = models.ForeignKey(
         blank=False,
         null=False,
-        to=settings.AUTH_USER_MODEL,
+        to='profile.UserProfile',
         on_delete=models.CASCADE,
         related_name='created_%(class)ss',
         related_query_name='created_%(class)s'

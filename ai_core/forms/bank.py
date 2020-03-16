@@ -1,6 +1,6 @@
 from django import forms
 
-from ai_django.core.validators.bank import IBANValidator, BICValidator, IBAN_COUNTRY_CODE_LENGTH
+from ai_django.ai_core.validators.bank import IBANValidator, BICValidator, IBAN_COUNTRY_CODE_LENGTH
 
 IBAN_MIN_LENGTH = min(IBAN_COUNTRY_CODE_LENGTH.values())
 
@@ -24,7 +24,6 @@ class IBANFormField(forms.CharField):
     https://en.wikipedia.org/wiki/International_Bank_Account_Number
     .. versionadded:: 1.1
     """
-
     def __init__(self, use_nordea_extensions=False, include_countries=None, *args, **kwargs):
         kwargs.setdefault('min_length', IBAN_MIN_LENGTH)
         kwargs.setdefault('max_length', 34)

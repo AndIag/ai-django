@@ -1,7 +1,7 @@
 from django.db import models
 
-from ai_django.core.forms import IBANFormField, BICFormField
-from ai_django.core.validators import BICValidator, IBANValidator
+from ai_django.ai_core.forms import IBANFormField, BICFormField
+from ai_django.ai_core.validators import BICValidator, IBANValidator
 
 
 class IBANField(models.CharField):

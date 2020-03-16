@@ -1,8 +1,4 @@
-from django.core.validators import RegexValidator
 from django.utils.deconstruct import deconstructible
-from django.utils.translation import gettext_lazy as _
-
-PHONE_REGEX = RegexValidator(regex=r'^\+?1?\d{9,15}$', message=_("PHONE_REGEX_ERROR"))
 
 
 @deconstructible

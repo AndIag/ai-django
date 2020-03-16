@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class AIDjangoCoreConfig(AppConfig):  # pragma: no cover
-    name = 'ai_django.core'
+    name = 'ai_django.ai_core'
