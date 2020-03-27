@@ -10,11 +10,12 @@ logger = logging.getLogger(__name__)
 
 class CreationStampModel(models.Model):
     """Adds a creation stamp value to a model"""
+    _editable_date = False
 
-    creation_date = models.DateTimeField(null=False, blank=True, editable=False, default=timezone.now)
+    creation_date = models.DateTimeField(null=False, blank=True, editable=_editable_date, default=timezone.now)
 
     def save(self, *args, **kwargs):
-        if not self.id:
+        if self.id is None:
             self.creation_date = timezone.now()
         super(CreationStampModel, self).save(*args, **kwargs)
 
