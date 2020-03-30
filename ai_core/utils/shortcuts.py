@@ -1,6 +1,7 @@
 import logging
 import uuid
 from datetime import timedelta, datetime, date
+from itertools import groupby
 
 from django.apps import apps
 from django.conf import settings
@@ -173,3 +174,14 @@ def is_payment_required(response):
     :return: Check if the error means a payment is required by the customer
     """
     return response.status_code == status.HTTP_402_PAYMENT_REQUIRED
+
+
+def queryset_to_keyed_dict(queryset, serializer, key_function):
+    """
+    Converts a queryset to a dict using the field selected with "key_function" as key
+    :param queryset: Django queryset
+    :param serializer: Used to serialize dictionary value
+    :param key_function: Function used to select key field. Ex: lambda q: q.key
+    :return: {key: serialized_value}
+    """
+    return {k.lower(): serializer(g, many=True).data for k, g in groupby(queryset, key=key_function)}

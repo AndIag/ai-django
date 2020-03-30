@@ -26,6 +26,11 @@ class KeyModel(models.Model):
         ]
     )
 
+    class Key:
+        @classmethod
+        def members(cls):
+            return [attr for attr in dir(cls) if not callable(getattr(cls, attr)) and not attr.startswith("__")]
+
     def __str__(self):
         return self.key
 
