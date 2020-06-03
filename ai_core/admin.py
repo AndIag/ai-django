@@ -9,7 +9,7 @@ class StampedModelAdmin(admin.ModelAdmin):
 
 class AuditedModelAdmin(StampedModelAdmin):
     def get_readonly_fields(self, request, obj=None):
-        return super(AuditedModelAdmin, self).get_readonly_fields(request, obj) + ('customer', 'created_by')
+        return super(AuditedModelAdmin, self).get_readonly_fields(request, obj) + ('created_by',)
 
 
 class TraceableModelAdmin(admin.ModelAdmin):

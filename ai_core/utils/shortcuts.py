@@ -171,7 +171,7 @@ def weeks_between(d1, d2):
 def is_payment_required(response):
     """
     :param response: Response
-    :return: Check if the error means a payment is required by the customer
+    :return: Check if the error means a payment is required
     """
     return response.status_code == status.HTTP_402_PAYMENT_REQUIRED
 
