@@ -7,12 +7,8 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
-from django.shortcuts import _get_queryset, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.utils import timezone, translation
-from django.utils.translation import gettext as _
-from rest_framework import status
-
-from ai_django.ai_core.utils.exceptions import NotFound
 
 logger = logging.getLogger(__name__)
 
@@ -64,33 +60,6 @@ def get_object_id_or_none(klass, *args, **kwargs):
         return get_object_or_404(klass, *args, **kwargs).id
     except Http404:
         return None
-
-
-def get_object_or_raise(klass, *args, label=None, **kwargs):
-    """
-    Uses get() to return an object, or raise NotFound if the object does not exist.
-
-    klass may be a Model, Manager, or QuerySet object. All other passed
-    arguments and keyword arguments are used in the get() query.
-
-    raised exception uses 'label' or 'id' kwargs to fill message.
-
-    Note: Like with get(), an MultipleObjectsReturned will be raised if more than one
-    object is found.
-    """
-
-    queryset = _get_queryset(klass)
-    if not hasattr(queryset, 'get'):
-        klass__name = klass.__name__ if isinstance(klass, type) else klass.__class__.__name__
-        raise ValueError(
-            "First argument to get_object_or_raise() must be a Model, Manager, "
-            "or QuerySet, not '%s'." % klass__name
-        )
-    try:
-        return queryset.get(*args, **kwargs)
-    except queryset.model.DoesNotExist:
-        klass__name = klass.__name__ if isinstance(klass, type) else klass.__class__.__name__
-        raise NotFound(model=_(klass__name.lower()), value=kwargs.pop(label, kwargs.pop('id', '')))
 
 
 def copy(d, exclude=None):
@@ -166,14 +135,6 @@ def weeks_between(d1, d2):
     monday1 = (d1 - timedelta(days=d1.weekday()))
     monday2 = (d2 - timedelta(days=d2.weekday()))
     return timedelta(weeks=(monday2 - monday1).days / 7)
-
-
-def is_payment_required(response):
-    """
-    :param response: Response
-    :return: Check if the error means a payment is required
-    """
-    return response.status_code == status.HTTP_402_PAYMENT_REQUIRED
 
 
 def queryset_to_keyed_dict(queryset, serializer, key_function):

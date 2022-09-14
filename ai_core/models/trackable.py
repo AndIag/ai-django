@@ -1,10 +1,10 @@
 import logging
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from rest_framework.exceptions import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class CreationStampModel(models.Model):
     creation_date = models.DateTimeField(null=False, blank=True, editable=_editable_date, default=timezone.now)
 
     def save(self, *args, **kwargs):
-        if self.id is None:
+        if self.pk is None:
             self.creation_date = timezone.now()
         super(CreationStampModel, self).save(*args, **kwargs)
 
@@ -87,7 +87,7 @@ class TraceableModel(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
-        if not self.id:
+        if not self.pk:
             # Set 'from_date' on first save
             self.from_date = timezone.now()
 
