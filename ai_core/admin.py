@@ -1,4 +1,7 @@
+from abc import abstractmethod
+
 from django.contrib import admin
+from django.db.models.functions import ExtractYear
 from django.http import HttpResponseRedirect
 
 
@@ -23,3 +26,36 @@ class TraceableModelAdmin(admin.ModelAdmin):
             return HttpResponseRedirect(".")
 
         return super(TraceableModelAdmin, self).response_change(request, obj)
+
+
+class ReadOnlyTabularInline(admin.TabularInline):
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class YearFilter(admin.SimpleListFilter):
+    title = 'year'
+    parameter_name = 'year'
+
+    @property
+    @abstractmethod
+    def model(self):
+        raise NotImplementedError
+
+    def lookups(self, request, model_admin):
+        year_list = self.model.objects \
+            .annotate(y=ExtractYear('date')).order_by('y') \
+            .values_list('y', flat=True) \
+            .distinct()
+        return [(str(y), str(y)) for y in year_list]
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            return queryset.filter(date__year=self.value())
+        return queryset
