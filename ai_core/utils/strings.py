@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Optional
 
 
 def whitespaces_clean(word: str) -> str:
@@ -8,6 +8,11 @@ def whitespaces_clean(word: str) -> str:
 
 def remove_parenthesis(word: str) -> str:
     return whitespaces_clean(re.sub(r'\([\w\-_−–#: !+]*\)', '', word).strip())
+
+
+def find_roman(w: str) -> Optional[str]:
+    match = re.match(r'^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$', w)
+    return ''.join(match.groups()) if match else None
 
 
 def int_to_roman(num: int) -> str:
