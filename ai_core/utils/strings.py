@@ -1,5 +1,6 @@
 import re
-from typing import List, Optional
+from difflib import SequenceMatcher
+from typing import List, Optional, Tuple
 
 
 def whitespaces_clean(word: str) -> str:
@@ -7,7 +8,21 @@ def whitespaces_clean(word: str) -> str:
 
 
 def remove_parenthesis(word: str) -> str:
-    return whitespaces_clean(re.sub(r'\([\w\-_−–#: !+]*\)', '', word).strip())
+    return whitespaces_clean(re.sub(r'\([\w\-_−–#: !+]*\)', '', word))
+
+
+def remove_symbols(word: str) -> str:
+    return whitespaces_clean(re.sub(r'[^a-zA-Z0-9\-]', ' ', word))
+
+
+def remove_conjunctions(word: str) -> str:
+    conjunctions = [
+        'EL', 'LA', 'LOS', 'LAS',
+        'O', 'A', 'OS', 'AS',
+        'DE', 'DA', 'DO', 'DAS', 'DOS',
+        'L', 'ELS', 'LES', 'SES', 'ES', 'SA',
+    ]
+    return ' '.join(i for i in word.split() if i not in conjunctions)
 
 
 def find_roman(w: str) -> Optional[str]:
@@ -41,33 +56,19 @@ def roman_to_int(s: str) -> int:
     return num
 
 
-def levenshtein_distance(s1, s2):
-    # This function has already been implemented for you.
-    # Source of the implementation:
-    # https://stackoverflow.com/questions/2460177/edit-distance-in-python
-    if len(s1) > len(s2):
-        s1, s2 = s2, s1
+def closest_result(keyword: str, elements: List[str]) -> Tuple[Optional[str], float]:
+    if any(e == keyword for e in elements):
+        return keyword, 1.
 
-    distances = range(len(s1) + 1)
-    for i2, c2 in enumerate(s2):
-        distances_ = [i2 + 1]
-        for i1, c1 in enumerate(s1):
-            if c1 == c2:
-                distances_.append(distances[i1])
-            else:
-                distances_.append(1 + min((distances[i1], distances[i1 + 1],
-                                           distances_[-1])))
-        distances = distances_
-    return distances[-1]
-
-
-def closest_result(keyword: str, elements: List[str]) -> str:
-    best_distance = levenshtein_distance(keyword, elements[0])
+    best_distance = SequenceMatcher(a=keyword, b=elements[0]).ratio()
     best_word = elements[0]
-    for w in elements:
-        d = levenshtein_distance(keyword, w)
-        if d < best_distance:
-            best_distance = d
-            best_word = w
+    for possibility in elements:
+        if all(w in keyword for w in possibility.split()) and all(w in possibility for w in keyword.split()):
+            return possibility, 1.
 
-    return best_word
+        d = SequenceMatcher(a=keyword, b=possibility).ratio()
+        if d > best_distance:
+            best_distance = d
+            best_word = possibility
+
+    return best_word, best_distance
