@@ -3,6 +3,10 @@ from difflib import SequenceMatcher
 from typing import List, Optional, Tuple
 
 
+####################################################
+#                  STRING CLEANUP                  #
+####################################################
+
 def whitespaces_clean(word: str) -> str:
     return re.sub(r'\s', ' ', re.sub(r'\s+', ' ', word)).strip()
 
@@ -19,11 +23,15 @@ def remove_conjunctions(word: str) -> str:
     conjunctions = [
         'EL', 'LA', 'LOS', 'LAS',
         'O', 'A', 'OS', 'AS',
-        'DE', 'DA', 'DO', 'DAS', 'DOS',
+        'DE', 'DA', 'DO', 'DAS', 'DOS', 'DEL',
         'L', 'ELS', 'LES', 'SES', 'ES', 'SA',
     ]
     return ' '.join(i for i in word.split() if i not in conjunctions)
 
+
+####################################################
+#                  ROMAN NUMBERS                   #
+####################################################
 
 def find_roman(w: str) -> Optional[str]:
     match = re.match(r'^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$', w)
@@ -55,6 +63,10 @@ def roman_to_int(s: str) -> int:
             i += 1
     return num
 
+
+####################################################
+#                    UTILITIES                     #
+####################################################
 
 def closest_result(keyword: str, elements: List[str]) -> Tuple[Optional[str], float]:
     if any(e == keyword for e in elements):
