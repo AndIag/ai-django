@@ -25,8 +25,8 @@ def get_model(model_name):
     :param model_name: string matching existing model name
     :return: Model
     """
-    tsapps = list(map(lambda x: x.split('.')[-1], settings.TSQUAD_APPS))  # Gets the last part of the app name
-    app_label = ContentType.objects.get(app_label__in=tsapps, model__iexact=model_name).app_label
+    _apps = list(map(lambda x: x.split('.')[-1], settings.INSTALLED_APPS))  # Gets the last part of the app name
+    app_label = ContentType.objects.get(app_label__in=_apps, model__iexact=model_name).app_label
     return apps.get_model(app_label=app_label, model_name=model_name)
 
 
