@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from difflib import SequenceMatcher
 from typing import List, Optional, Tuple
 
@@ -20,6 +21,10 @@ def remove_symbols(word: str, ignore_quotes: bool = False) -> str:
     return whitespaces_clean(re.sub(reg, ' ', word))
 
 
+def remove_editions(word: str) -> str:
+    return whitespaces_clean(' '.join(w for w in word.split() if find_roman(re.sub(r'[\'\".:]', '', w)) is None))
+
+
 def remove_conjunctions(word: str) -> str:
     conjunctions = [
         'EL', 'LA', 'LOS', 'LAS',
@@ -34,12 +39,18 @@ def remove_conjunctions(word: str) -> str:
 #                  ROMAN NUMBERS                   #
 ####################################################
 
-def find_roman(w: str) -> Optional[str]:
-    match = re.match(r'^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$', w)
+def find_roman(word: str) -> Optional[str]:
+    """
+    :return: #word if #word is a roman number
+    """
+    match = re.match(r'^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$', word)
     return ''.join(match.groups()) if match else None
 
 
 def int_to_roman(num: int) -> str:
+    """
+    :return: converts an integer number to a roman number
+    """
     val = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     syb = ('M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I')
     roman_num = ""
@@ -51,6 +62,9 @@ def int_to_roman(num: int) -> str:
 
 
 def roman_to_int(s: str) -> int:
+    """
+    :return: converts a roman number to an integer number
+    """
     roman = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000, 'IV': 4, 'IX': 9, 'XL': 40, 'XC': 90,
              'CD': 400, 'CM': 900}
     i = 0
@@ -63,6 +77,22 @@ def roman_to_int(s: str) -> int:
             num += roman[s[i]]
             i += 1
     return num
+
+
+####################################################
+#                       DATE                       #
+####################################################
+def find_date(w: str) -> Optional[datetime.date]:
+    """
+    :return: any matching date in the format of DD-MM-YYYY
+    """
+    match = re.search(r"([0-9]{2}-[0-9]{2}-[0-9]{4})", w)
+    if not match:
+        return None
+    try:
+        return datetime.strptime(match.group(0), '%d-%m-%Y').date()
+    except ValueError:
+        return None
 
 
 ####################################################
