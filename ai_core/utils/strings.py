@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, date
 from difflib import SequenceMatcher
 from typing import List, Optional, Tuple
 
@@ -82,7 +82,7 @@ def roman_to_int(s: str) -> int:
 ####################################################
 #                       DATE                       #
 ####################################################
-def find_date(w: str) -> Optional[datetime.date]:
+def find_date(w: str) -> Optional[date]:
     """
     :return: any matching date in the format of DD-MM-YYYY
     """
